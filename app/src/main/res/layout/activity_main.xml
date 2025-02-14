@@ -41,7 +41,7 @@
         android:text="Email" />
 
     <Button
-        android:id="@+id/cameraButton"
+        android:id="@+id/btnOpenCamera"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Take picture" />

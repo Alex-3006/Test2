@@ -1,16 +1,18 @@
 package com.example.test2
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
-
-import com.example.test2.ui.CameraFragment
 
 class MainActivity : AppCompatActivity() {
     private val fileName = "user_data.json"
@@ -25,6 +27,8 @@ class MainActivity : AppCompatActivity() {
         val inputName = findViewById<EditText>(R.id.inputName)
         val inputAge = findViewById<EditText>(R.id.inputAge)
         val inputEmail = findViewById<EditText>(R.id.inputEmail)
+
+        var btnOpenCamera: Button
 
         // Save JSON data when the button is clicked
         saveButton.setOnClickListener {
@@ -46,13 +50,12 @@ class MainActivity : AppCompatActivity() {
             textView.text = jsonData ?: "No JSON data found."
         }
 
-        val cameraButton = findViewById<Button>(R.id.cameraButton)
+        btnOpenCamera = findViewById(R.id.btnOpenCamera)
 
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
-
-        cameraButton.setOnClickListener {
-            fragmentTransaction.replace(R.id.fragment_container, CameraFragment())
-            fragmentTransaction.commit()
+        btnOpenCamera.setOnClickListener {
+            val intent = Intent(this, CameraActivity::class.java)
+            val CAMERA_ACTIVITY_REQUEST_CODE = 102
+            startActivityForResult(intent, CAMERA_ACTIVITY_REQUEST_CODE)
         }
     }
 

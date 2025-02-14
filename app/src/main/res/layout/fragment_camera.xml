@@ -18,6 +18,13 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <ImageView
+            android:id="@+id/imgCaptured"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_marginTop="20dp"
+            android:scaleType="centerCrop"/>
+
         <Button
             android:id="@+id/startCameraButton"
             android:layout_width="wrap_content"
@@ -29,5 +36,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="capture" />
+
+
+        <Button
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go Back" />
     </LinearLayout>
+
 </FrameLayout>
