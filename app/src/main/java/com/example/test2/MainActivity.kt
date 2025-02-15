@@ -3,6 +3,7 @@ package com.example.test2
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -13,9 +14,13 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 
 class MainActivity : AppCompatActivity() {
     private val fileName = "user_data.json"
+
+    private lateinit var imageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,12 +35,16 @@ class MainActivity : AppCompatActivity() {
 
         var btnOpenCamera: Button
 
+        imageView = findViewById(R.id.imgCaptured)
+        imageView.isVisible = false
+
         // Save JSON data when the button is clicked
         saveButton.setOnClickListener {
             val jsonObject = JSONObject()
             jsonObject.put("name", inputName.text)
             jsonObject.put("age", inputAge.text)
             jsonObject.put("email", inputEmail.text)
+            jsonObject.put("img", imageView.toString())
 
             if (writeJsonToFile(jsonObject)) {
                 textView.text = "JSON saved successfully!"
@@ -54,8 +63,21 @@ class MainActivity : AppCompatActivity() {
 
         btnOpenCamera.setOnClickListener {
             val intent = Intent(this, CameraActivity::class.java)
-            val CAMERA_ACTIVITY_REQUEST_CODE = 102
-            startActivityForResult(intent, CAMERA_ACTIVITY_REQUEST_CODE)
+            cameraResultLauncher.launch(intent)
+        }
+    }
+
+    // Register for activity result
+    private val cameraResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == RESULT_OK) {
+            val capturedImageUriString = result.data?.getStringExtra("capturedImageUri")
+            if (!capturedImageUriString.isNullOrEmpty()) {
+                val capturedImageUri = Uri.parse(capturedImageUriString)
+                imageView.setImageURI(capturedImageUri) // Show image in ImageView
+                imageView.isVisible = true
+            }
         }
     }
 

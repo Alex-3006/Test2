@@ -33,6 +33,7 @@ class CameraActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
     private lateinit var previewView: PreviewView
     private lateinit var captureButton: Button
+    private var capturedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +55,10 @@ class CameraActivity : AppCompatActivity() {
 
         val backButton = findViewById<Button>(R.id.backButton)
         backButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
-            finish() // Closes the current activity and goes back to MainActivity
-
+            val resultIntent = Intent()
+            resultIntent.putExtra("capturedImageUri", capturedImageUri.toString()) // Send Image URI
+            setResult(RESULT_OK, resultIntent)
+            finish() // Close CameraActivity
         }
     }
 
@@ -97,7 +98,7 @@ class CameraActivity : AppCompatActivity() {
             val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(previewView.surfaceProvider)
+                it.surfaceProvider = previewView.surfaceProvider
             }
 
             imageCapture = ImageCapture.Builder().build()
@@ -142,12 +143,12 @@ class CameraActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val msg = "Photo capture succeeded: ${output.savedUri}"
-                    Log.d(TAG, msg)
+                    capturedImageUri = output.savedUri
+                    val msg = "Photo captured: $capturedImageUri"
+                    Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+                    Log.d("CameraActivity", msg)
 
-                    // Display the captured image in an ImageView
-                    val imageUri = output.savedUri
-                    displayCapturedImage(imageUri)
+                    displayCapturedImage(capturedImageUri)
                 }
             })
     }
